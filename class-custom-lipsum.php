@@ -50,9 +50,13 @@ if ( ! class_exists( 'CustomLipsum' ) ) {
 				'paragraphs'       => 5,
 				'add-filler'       => '',
 				'start-with-lorem' => '',
+				'auto-generate'    => '',
 			);
 			
-			$values = array_merge( $default_values, $_GET );
+			$values = shortcode_atts( $default_values, $atts );
+			
+			if ( isset( $_GET ) && empty( $values['auto-generate'] ) )
+				$values = array_merge( $default_values, $_GET );
 			
 			if ( ! is_numeric( $values['paragraphs'] ) || ( $values['paragraphs'] < 1 ) )
 				$values['paragraphs'] = 1;
@@ -63,6 +67,12 @@ if ( ! class_exists( 'CustomLipsum' ) ) {
 			
 			if ( ! in_array( $values['type'], array( 'all', 'add-filler' ) ) )
 				$values['type'] = 'all';
+			
+			
+			if ( ! empty( $values['auto-generate'] ) ) {
+				$this->generate_ipsum( $values );
+				return;
+			}
 			
 			
 			foreach ( array_keys( $values ) as $key ) {
